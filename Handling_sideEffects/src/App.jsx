@@ -6,6 +6,7 @@ import Modal from "./components/Modal.jsx";
 import DeleteConfirmation from "./components/DeleteConfirmation.jsx";
 import logoImg from "../assets/logo.png";
 import { sortPlacesByDistance } from "../loc.js";
+import AvailablePlaces from "./components/AvailablePlaces.jsx";
 
 const storedIds = JSON.parse(localStorage.getItem("selectedId")) || [];
 console.log(storedIds);
@@ -96,11 +97,13 @@ setModalOpen(false)
           places={pickedPlaces}
           onSelectPlace={handleStartRemovePlace}
         />
-        <Places
+        {/* <Places
           title="Available Places"
           places={availablePlaces}
           onSelectPlace={handleSelectPlace}
-        />
+        /> */}
+
+        <AvailablePlaces onSelectPlace={handleSelectPlace}/>
       </main>
     </>
   );
