@@ -5,12 +5,26 @@ const AvailablePlaces = ({onSelectPlace}) => {
 // here we want to write the fetching data API request
 const [availablePlaces, setAailablePlaces] = useState([])
 
+// useEffect(()=>{
+//     fetch("http://localhost:3000/places").then((response)=>{
+//        return response.json()
+//     }).then((rData)=>{
+//        setAailablePlaces(rData.places)
+//     })
+// },[])
 useEffect(()=>{
-    fetch("http://localhost:3000/places").then((response)=>{
-       return response.json()
-    }).then((rData)=>{
-       setAailablePlaces(rData.places)
-    })
+
+async function fetchingData()
+{
+  const response = await fetch("http://localhost:3000/places")
+  const data =await response.json()
+  console.log("data>>:",data);
+  
+  setAailablePlaces(data.places)
+}
+
+fetchingData()
+
 },[])
 
 
