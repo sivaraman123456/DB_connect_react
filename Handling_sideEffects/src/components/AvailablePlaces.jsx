@@ -1,58 +1,55 @@
-import Error from "./Error";
-import Places from "./Places";
-import { useEffect, useState } from "react";
-import { sortPlacesByDistance } from "../../loc";
-import { fetchingAvailablePlaces } from "../../http";
-const AvailablePlaces = ({ onSelectPlace }) => {
-  // here we want to write the fetching data API request
-  const [availablePlaces, setAailablePlaces] = useState([]);
+import { useState, useEffect } from 'react';
+
+import Places from './Places.jsx';
+import Error from './Error.jsx';
+import { sortPlacesByDistance } from '../../loc.js';
+import { fetchAvailablePlaces } from '../../http.js';
+
+export default function AvailablePlaces({ onSelectPlace }) {
   const [isFetching, setIsFetching] = useState(false);
-  const [error, setError] = useState("");
+  const [availablePlaces, setAvailablePlaces] = useState([]);
+  const [error, setError] = useState();
 
   useEffect(() => {
-    async function fetchingData() {
+    async function fetchPlaces() {
+      setIsFetching(true);
+
       try {
-        setIsFetching(true);
-        const data = await fetchingAvailablePlaces();
+        const places = await fetchAvailablePlaces();
+
         navigator.geolocation.getCurrentPosition((position) => {
           const sortedPlaces = sortPlacesByDistance(
-            data,
+            places,
             position.coords.latitude,
             position.coords.longitude
           );
-          setAailablePlaces(sortedPlaces);
-          setIsFetching(false); // it take sometime to set the sorted distance tha's why I Put the seIsfetching false here
+          setAvailablePlaces(sortedPlaces);
+          setIsFetching(false);
         });
-
-        console.log("data>>:", data);
       } catch (error) {
-        setError({ message: error.message || "Could not fetch the data " });
+        setError({
+          message:
+            error.message || 'Could not fetch places, please try again later.',
+        });
+        setIsFetching(false);
       }
-      setIsFetching(false);
     }
 
-    fetchingData();
+    fetchPlaces();
   }, []);
 
   if (error) {
-    console.log("error:", error);
-
-    return (
-      <div className="flex flex-col justify-center items-center">
-        <Error title="An error occured..!" message={error.message} />
-      </div>
-    );
+    return <Error title="An error occurred!" message={error.message} />;
   }
+
   return (
     <Places
       title="Available Places"
-      isLoadig={isFetching}
-      loadingText="Fetching place data"
       places={availablePlaces}
+      isLoading={isFetching}
+      loadingText="Fetching place data..."
       fallbackText="No places available."
       onSelectPlace={onSelectPlace}
     />
   );
-};
-
-export default AvailablePlaces;
+}
